@@ -19,17 +19,23 @@ It automatically provides the following parameter values to the Application temp
 
 Within [Argo CD cluster Secrets](../declarative-setup.md#clusters) are data fields describing the cluster:
 ```yaml
+# This will replace the cluster name "in-cluster" by "in-cluster2".
+apiVersion: v1
 kind: Secret
-data:
-  # Within Kubernetes these fields are actually encoded in Base64; they are decoded here for convenience.
-  # (They are likewise decoded when passed as parameters by the Cluster generator)
-  config: "{'tlsClientConfig':{'insecure':false}}"
-  name: "in-cluster2"
-  server: "https://kubernetes.default.svc"
 metadata:
+  name: cluster-in-cluster2
+  namespace: "argocd"
   labels:
     argocd.argoproj.io/secret-type: cluster
-# (...)
+stringData:
+  config: |-
+    {
+       "tlsClientConfig":{
+          "insecure":false
+       }
+    }
+  name: "in-cluster2"
+  server: "https://kubernetes.default.svc"
 ```
 
 The Cluster generator will automatically identify clusters defined with Argo CD, and extract the cluster data as parameters:
